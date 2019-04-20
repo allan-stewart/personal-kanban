@@ -96,6 +96,12 @@ button:disabled {
     border-color: green;
 }
 
+.destructive {
+    color: red;
+    background-color: #fff;
+    border-color: red;
+}
+
 input[type=text] {
     font-size: 1rem;
     width: 100%;

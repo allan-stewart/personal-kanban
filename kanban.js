@@ -116,6 +116,12 @@ const clearCssClass = (className) => {
 const newCard = () => showModal()
 
 const showModal = () => {
+    const deleteButton = document.getElementById('deleteButton')
+    if (editingCard) {
+        deleteButton.classList.remove('hidden')
+    } else {
+        deleteButton.classList.add('hidden')
+    }
     document.getElementById('modal').classList.remove('hidden')
     document.getElementById('cardTextInput').focus()
 }
@@ -144,6 +150,13 @@ const saveCard = () => {
     }
     save()
     cancelModal()
+}
+
+const deleteCard = () => {
+    if (editingCard) {
+        allCards = allCards.filter(x => x !== editingCard)
+        save()
+    }
 }
 
 const updateNewButtonState = () => {
