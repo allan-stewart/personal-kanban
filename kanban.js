@@ -10,6 +10,7 @@ const columns = {
     inProgress: { wip: 2 },
     done: { wip: 1000 }
 }
+let editingCard = null
 
 const init = () => {
     // TODO: Get all cards and wip limits from local storage
@@ -35,6 +36,7 @@ const createCard = (cardData) => {
     div.ondragstart = event => dragstart_handler(event, cardData)
     div.ondragend = event => dragend_handler(event, cardData)
     div.innerHTML = cardData.text
+    div.addEventListener('dblclick', event => editCard(cardData))
     
     cardData.div = div
     columns[cardData.column].div.appendChild(div)
@@ -88,4 +90,36 @@ const dragleave_handler = event => {
 
 const clearCssClass = (className) => {
     Array.from(document.getElementsByClassName(className)).forEach(x => x.classList.remove(className))
+}
+
+const newCard = () => showModal()
+
+const showModal = () => {
+    document.getElementById('modal').classList.remove('hidden')
+    document.getElementById('cardTextInput').focus()
+}
+
+const editCard = (cardData) => {
+    editingCard = cardData
+    document.getElementById('cardTextInput').value = cardData.text
+    showModal()
+}
+
+const cancelModal = () => {
+    document.getElementById('modal').classList.add('hidden')
+    document.getElementById('cardTextInput').value = ''
+    editingCard = null
+}
+
+const saveCard = () => {
+    var newText = document.getElementById('cardTextInput').value
+    if (!editingCard) {
+        const newCard = { text: newText, column: "ready" }
+        allCards.push(newCard)
+        createCard(newCard)
+    } else {
+        editingCard.text = newText
+        editingCard.div.innerHTML = newText
+    }
+    cancelModal()
 }

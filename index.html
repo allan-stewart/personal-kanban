@@ -5,17 +5,30 @@
         <script type="text/javascript" src="./kanban.js"></script>
     </head>
     <body>
+        <div id="modal" class="hidden">
+            <div id="modal-content">
+                <h2>Card Detail</h2>
+                <input id="cardTextInput" type="text" placeholder="Card text goes here">
+                <button onclick="saveCard()">Save</button>
+                <button class="secondary" onclick="cancelModal()">Cancel</button>
+            </div>
+        </div>
         <div class="row">
             <div class="column">
                 <h1>Ready</h1>
+                <div class="controls">
+                    <button onclick="newCard()">New Card</button>
+                </div>
                 <div id="readyCards" class="card-container"></div>
             </div>
             <div class="column">
                 <h1>In Progress</h1>
+                <div class="controls"></div>
                 <div id="inProgressCards" class="card-container"></div>
             </div>
             <div class="column">
                 <h1>Done</h1>
+                <div class="controls"></div>
                 <div id="doneCards" class="card-container"></div>
             </div>
         </div>
