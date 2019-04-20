@@ -81,10 +81,19 @@ button {
     border: 1px solid #333;
     padding: 5px 10px;
     font-size: 1rem;
+    cursor: pointer;
+}
+
+button:disabled {
+    color: #ccc;
+    background-color: #999;
+    cursor: not-allowed;
 }
 
 .secondary {
-    background-color: #999;
+    color: green;
+    background-color: #fff;
+    border-color: green;
 }
 
 input[type=text] {

@@ -8,11 +8,14 @@ const columns = {
     done: { wip: 1000 }
 }
 let editingCard = null
+let newCardButton
 
 const init = () => {
+    newCardButton = document.getElementById('newCardButton')
     load()
     setupColumns()
     allCards.forEach(createCard)
+    updateNewButtonState()
 }
 
 const load = () => {
@@ -24,6 +27,7 @@ const load = () => {
 const save = () => {
     window.localStorage.setItem('allCards', JSON.stringify(allCards))
     window.localStorage.setItem('wipLimits', JSON.stringify(columnNames.map(column => ({ column, wip: columns[column].wip }))))
+    updateNewButtonState()
 }
 
 const setupColumns = () => {
@@ -140,4 +144,8 @@ const saveCard = () => {
     }
     save()
     cancelModal()
+}
+
+const updateNewButtonState = () => {
+    newCardButton.disabled = !canMoveCardToColumn("ready")
 }
