@@ -33,6 +33,15 @@ const setupColumns = () => {
         columns[x].div.ondragover = event => dragover_handler(event)
         columns[x].div.ondragenter = event => dragenter_handler(event, x)
         columns[x].div.ondragleave = event => dragleave_handler(event)
+        
+        const wipElement = document.getElementById(`${x}Wip`)
+        if (wipElement) {
+            wipElement.value = columns[x].wip
+            wipElement.onchange = event => {
+                columns[x].wip = wipElement.value
+                save()
+            }
+        }
     })
 }
 

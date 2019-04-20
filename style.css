@@ -100,3 +100,14 @@ input[type=text] {
     padding: 5px;
     height: 30px;
 }
+
+.wip-control {
+    float: right;
+}
+
+input[type=number] {
+    font-size: 1rem;
+    width: 50px;
+    padding: 2px;
+    margin-bottom: 10px;
+}
