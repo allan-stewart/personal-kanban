@@ -1,10 +1,7 @@
-let allCards = [
-    { text: "Test card 1", column: "ready" },
-    { text: "Do something great today!", column: "ready" },
-    { text: "Thing I'm working on", column: "inProgress" }
-]
+let allCards = []
 let draggingCard = null
 let dropTarget = null
+const columnNames = ['ready', 'inProgress', 'done']
 const columns = {
     ready: { wip: 5 },
     inProgress: { wip: 2 },
@@ -13,13 +10,23 @@ const columns = {
 let editingCard = null
 
 const init = () => {
-    // TODO: Get all cards and wip limits from local storage
+    load()
     setupColumns()
     allCards.forEach(createCard)
 }
 
+const load = () => {
+    allCards = JSON.parse(window.localStorage.getItem('allCards')) || []
+    const wipLimits = JSON.parse(window.localStorage.getItem('wipLimits')) || []
+    wipLimits.forEach(x => columns[x.column].wip = x.wip)
+}
+
+const save = () => {
+    window.localStorage.setItem('allCards', JSON.stringify(allCards))
+    window.localStorage.setItem('wipLimits', JSON.stringify(columnNames.map(column => ({ column, wip: columns[column].wip }))))
+}
+
 const setupColumns = () => {
-    const columnNames = ['ready', 'inProgress', 'done']
     columnNames.forEach(x => {
         columns[x].div = document.getElementById(`${x}Cards`)
         columns[x].div.ondrop = event => drop_handler(event, x)
@@ -57,6 +64,7 @@ const dragend_handler = (event, cardData) => {
     if (dropTarget) {
         cardData.column = dropTarget.column
         dropTarget.div.appendChild(cardData.div)
+        save()
     }
     dropTarget = null
     draggingCard = null
@@ -121,5 +129,6 @@ const saveCard = () => {
         editingCard.text = newText
         editingCard.div.innerHTML = newText
     }
+    save()
     cancelModal()
 }
