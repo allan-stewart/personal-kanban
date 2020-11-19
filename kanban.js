@@ -7,6 +7,8 @@ const columns = {
     inProgress: { wip: 2 },
     done: { wip: 1000 }
 }
+const removeCardsAfterDays = 14
+const removeCardsAfterMilliseconds = removeCardsAfterDays * 24 * 60 * 60 * 1000
 let editingCard = null
 let newCardButton
 
@@ -16,18 +18,27 @@ const init = () => {
     setupColumns()
     allCards.forEach(createCard)
     updateNewButtonState()
+    fadeCardsInDone()
 }
 
 const load = () => {
     allCards = JSON.parse(window.localStorage.getItem('allCards')) || []
+    allCards.forEach(x => {
+        if (x.doneAt) {
+            x.doneAt = new Date(x.doneAt)
+        }
+    })
     const wipLimits = JSON.parse(window.localStorage.getItem('wipLimits')) || []
     wipLimits.forEach(x => columns[x.column].wip = x.wip)
 }
 
 const save = () => {
-    window.localStorage.setItem('allCards', JSON.stringify(allCards))
+    const now = new Date()
+    const cardsToSave = allCards.filter(x => getCardOpacity(now, x) > 0)
+    window.localStorage.setItem('allCards', JSON.stringify(cardsToSave))
     window.localStorage.setItem('wipLimits', JSON.stringify(columnNames.map(column => ({ column, wip: columns[column].wip }))))
     updateNewButtonState()
+    fadeCardsInDone()
 }
 
 const setupColumns = () => {
@@ -76,6 +87,9 @@ const dragstart_handler = (event, cardData) => {
 const dragend_handler = (event, cardData) => {
     if (dropTarget) {
         cardData.column = dropTarget.column
+        if (dropTarget.column === 'done') {
+            cardData.doneAt = new Date()
+        }
         dropTarget.div.appendChild(cardData.div)
         save()
     }
@@ -161,4 +175,19 @@ const deleteCard = () => {
 
 const updateNewButtonState = () => {
     newCardButton.disabled = !canMoveCardToColumn("ready")
+}
+
+const fadeCardsInDone = () => {
+    const now = new Date()
+    allCards
+        .filter(x => x.column === 'done' && x.doneAt)
+        .forEach(x => x.div.setAttribute('style', `opacity: ${getCardOpacity(now, x)}%;`))
+}
+
+const getCardOpacity = (referenceTime, card) => {
+    if (!card.doneAt || card.column !== 'done') {
+        return 100
+    }
+    const doneMs = referenceTime.valueOf() - card.doneAt.valueOf()
+    return 100 - Math.round(doneMs / removeCardsAfterMilliseconds * 100);
 }
