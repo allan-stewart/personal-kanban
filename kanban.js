@@ -19,6 +19,7 @@ const init = () => {
     allCards.forEach(createCard)
     updateNewButtonState()
     fadeCardsInDone()
+    sortDoneColumn()
 }
 
 const load = () => {
@@ -91,6 +92,7 @@ const dragend_handler = (event, cardData) => {
             cardData.doneAt = new Date()
         }
         dropTarget.div.appendChild(cardData.div)
+        sortDoneColumn()
         save()
     }
     dropTarget = null
@@ -190,4 +192,10 @@ const getCardOpacity = (referenceTime, card) => {
     }
     const doneMs = referenceTime.valueOf() - card.doneAt.valueOf()
     return 100 - Math.round(doneMs / removeCardsAfterMilliseconds * 100);
+}
+
+const sortDoneColumn = () => {
+    const doneCards = allCards.filter(x => x.column === 'done')
+    doneCards.sort((a, b) => b.doneAt - a.doneAt)
+    doneCards.forEach(x => document.getElementById('doneCards').appendChild(x.div))
 }
